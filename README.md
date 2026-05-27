@@ -4,7 +4,7 @@ An in-memory, console-based ticket reservation engine built with C# and .NET Cor
 
 ---
 
-## 🚀 The Core Problem
+##  The Core Problem
 
 * **Dynamic Capacities:** Seating capacity varies strictly based on bus class (Business vs. Economy).
 * **Isolated Inventories:** A physical coach can run multiple trips; seat tracking must be handled independently per trip to prevent double-booking.
@@ -12,7 +12,7 @@ An in-memory, console-based ticket reservation engine built with C# and .NET Cor
 
 ---
 
-## 🏗️ Architectural Design
+##  Architectural Design
 
 ```text
 BusTicketBookingSystem/
@@ -33,7 +33,7 @@ BusTicketBookingSystem/
 
 ---
 
-## 🛠️ Design Patterns Implemented
+## Design Patterns Implemented
 
 * **Strategy Pattern (`Bus/Strategies/`)**: Encapsulates seating capacities. Removes `if/else` checks from `Bus.cs`, satisfying the **Open/Closed Principle** so new coach types can be added without altering existing code.
 * **Builder Pattern (Nested in `Invoice.cs`)**: Uses a nested builder with a private constructor to guarantee financial records are never initialized in an incomplete or corrupt state.
