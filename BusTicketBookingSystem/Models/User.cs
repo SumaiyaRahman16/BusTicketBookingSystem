@@ -12,7 +12,7 @@ namespace BusTicketBookingSystem.Models
      
 
 
-        public User(string fullName, string mobileNumber, string emailAddress)
+        public User(string userId ,string fullName, string mobileNumber, string emailAddress)
         {   
             if (string.IsNullOrWhiteSpace(fullName)) 
                 throw new ArgumentException("Name cannot be empty");
@@ -22,7 +22,7 @@ namespace BusTicketBookingSystem.Models
                 throw new ArgumentException("Mobile number cannot be empty");
 
     
-            UserId = "USR-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+            UserId = userId;
             
             FullName = fullName;
             MobileNumber = mobileNumber;
