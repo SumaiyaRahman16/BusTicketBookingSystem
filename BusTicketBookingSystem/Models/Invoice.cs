@@ -4,7 +4,6 @@ namespace BusTicketBookingSystem.Models
 {
     public class Invoice
     {
- 
         public string InvoiceId { get; private set; }
         public Ticket AssociatedTicket { get; private set; }
         public decimal TotalAmount { get; private set; }
