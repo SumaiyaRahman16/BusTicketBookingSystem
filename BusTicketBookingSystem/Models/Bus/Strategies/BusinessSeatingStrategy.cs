@@ -1,11 +1,13 @@
-namespace BusTicketBookingSystem.Models.Bus.Strategies;
-
-public class BusinessSeatingStrategy
+namespace BusTicketBookingSystem.Models.Bus.Strategies
 {
-    public string ClassificationName => "Business";
-
-    public int GetCapacity()
+    public class BusinessSeatingStrategy : ISeatingStrategy
     {
-        return 28; 
+      
+        public string ClassificationName => "Business";
+
+        public int GetCapacity()
+        {
+            return 28; 
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using BusTicketBookingSystem.Models;
-using BusTicketBookingSystem.Models.Bus;
-using BusTicketBookingSystem.Models.Bus.Strategies;
+using BusTicketBookingSystem.Services;
+using BusTicketBookingSystem.UI;
 
 namespace BusTicketBookingSystem
 {
@@ -9,40 +9,20 @@ namespace BusTicketBookingSystem
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("=== Real-Time Terminal Input Test ===\n");
-           
-            int userCounter = 1;
-            try
-            {
+            // 1. Initialize our application engine dependencies in system memory
+            IUserRepository userRepository = new UserRepository();
+            IBusRepository busRepository = new BusRepository();
+            IScheduleRepository scheduleRepository = new ScheduleRepository();
+            IInvoiceRepository invoiceRepository = new InvoiceRepository();
             
-                Console.Write("Enter Full Name: ");
-                string inputtedName = Console.ReadLine();
+            // 2. Generate secured financial receipt defaulting to UNPAID
+       
 
-                Console.Write("Enter Mobile Number: ");
-                string inputtedMobile = Console.ReadLine();
+            // 2. Pass dependencies into the terminal ui management layer
+            MenuController uiCoordinator = new MenuController(userRepository, busRepository, scheduleRepository , invoiceRepository);
 
-                Console.Write("Enter Email Address: ");
-                string inputtedEmail = Console.ReadLine();
-
-                string generatedId = $"USR-{userCounter++}";
-
-                Console.WriteLine("\nProcessing registration data...");
-                Console.WriteLine("--------------------------------------------");
-
- 
-                User newUser = new User( generatedId , inputtedName, inputtedMobile, inputtedEmail);
-                
-
-                Console.WriteLine("✅ User Instance Created Successfully!");
-                Console.WriteLine($"System Output: {newUser}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"\n Input Validation Failed: {ex.Message}");
-            }
-
-            Console.WriteLine("\nPress any key to exit...");
-            Console.ReadKey();
+            // 3. Fire up the continuous application execution loop
+            uiCoordinator.RunMainMenu();
         }
     }
 }
