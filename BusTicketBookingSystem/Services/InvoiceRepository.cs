@@ -14,7 +14,6 @@ namespace BusTicketBookingSystem.Services
         {
             string generatedId = $"INV-{_idCounter++}";
 
-            // Use reflection to cleanly overwrite the InvoiceId field with our sequential ID
             typeof(Invoice).GetProperty("InvoiceId")?.SetValue(invoice, generatedId);
 
             _invoices.Add(invoice);

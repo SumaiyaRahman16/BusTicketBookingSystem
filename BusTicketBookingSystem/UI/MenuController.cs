@@ -26,35 +26,50 @@ namespace BusTicketBookingSystem.UI
 
         private void SeedInitialData()
         {
-            _busRepository.AddBus(new Bus("Dhaka-Metro-11", new EconomySeatingStrategy()));
-            _busRepository.AddBus(new Bus("915", new BusinessSeatingStrategy())); // Named 915 like assignment example!
+         
+            _busRepository.AddBus(new Bus("Dhaka-Metro-11", new EconomySeatingStrategy()));  // Bus 1
+            _busRepository.AddBus(new Bus("915-VIP-BIZ", new BusinessSeatingStrategy()));     // Bus 2
+            _busRepository.AddBus(new Bus("Sylhet-Exp-12", new BusinessSeatingStrategy()));   // Bus 3
+            _busRepository.AddBus(new Bus("Cox-Night-77", new EconomySeatingStrategy()));     // Bus 4
+            _busRepository.AddBus(new Bus("Ctg-Metro-99", new EconomySeatingStrategy()));     // Bus 5
 
-            var bus1 = _busRepository.GetBusByCoachNumber("Dhaka-Metro-11");
-            var bus2 = _busRepository.GetBusByCoachNumber("915");
+     
+            var busDhakaSylhet = _busRepository.GetBusByCoachNumber("Dhaka-Metro-11");
+            var busDhakaCtg    = _busRepository.GetBusByCoachNumber("915-VIP-BIZ");
+            var busSylhetDhaka = _busRepository.GetBusByCoachNumber("Sylhet-Exp-12");
+            var busDhakaCox    = _busRepository.GetBusByCoachNumber("Cox-Night-77");
+            var busCtgDhaka    = _busRepository.GetBusByCoachNumber("Ctg-Metro-99");
 
-            _scheduleRepository.AddSchedule(bus1, "Dhaka", "Sylhet", DateTime.Now.AddHours(4), 650);
-            _scheduleRepository.AddSchedule(bus2, "Dhaka", "Chittagong", DateTime.Now.AddHours(7), 1400);
+            _scheduleRepository.AddSchedule(busDhakaSylhet, "Dhaka", "Sylhet", DateTime.Today.AddHours(7), 650);         // Schedule 1
+            _scheduleRepository.AddSchedule(busDhakaCtg,    "Dhaka", "Chittagong", DateTime.Today.AddHours(22), 1400);   // Schedule 2
+            _scheduleRepository.AddSchedule(busSylhetDhaka, "Sylhet", "Dhaka", DateTime.Today.AddDays(1).AddHours(14), 1200); // Schedule 3
+            _scheduleRepository.AddSchedule(busDhakaCox,    "Dhaka", "Cox's Bazar", DateTime.Today.AddHours(23), 900);       // Schedule 4
+            _scheduleRepository.AddSchedule(busCtgDhaka,    "Chittagong", "Dhaka", DateTime.Today.AddDays(1).AddHours(8), 700); // Schedule 5 // Tomorrow 8:00 AM Economy Return
         }
 
         public void RunMainMenu()
         {
+
+            Console.WriteLine("--- Bus Ticket Booking System ---");
+
             while (true)
             {
+           
+
                 Console.WriteLine("\n1. Create User");
                 Console.WriteLine("2. Show Users");
-                Console.WriteLine("3. Create Bus");         
+                Console.WriteLine("3. Create Bus");
                 Console.WriteLine("4. Show Buses");
-                Console.WriteLine("5. Create Schedule");     
+                Console.WriteLine("5. Create Schedule");
                 Console.WriteLine("6. Show Schedules");
-                Console.WriteLine("7. Show Schedule Details (Seating Grid)");
+                Console.WriteLine("7. Show Schedule Details");
                 Console.WriteLine("8. Book Ticket");
-                Console.WriteLine("9. Show Invoices");
+                Console.WriteLine("9. Show Invoices of a user");
                 Console.WriteLine("10. Pay Invoice");
                 Console.WriteLine("11. Show Tickets of a User");
                 Console.WriteLine("12. Exit");
-                Console.WriteLine("---------------------------------");
+        
                 Console.Write("Select option: ");
-
                 string choice = Console.ReadLine();
                 Console.WriteLine();
 
@@ -62,7 +77,7 @@ namespace BusTicketBookingSystem.UI
                 {
                     case "1": RegisterPassenger(); break;
                     case "2": ViewAllPassengers(); break;
-                    case "3": Console.WriteLine("Coach auto-seeded for test. Feature ready."); break; 
+                    case "3": CreateBusWorkflow(); break;
                     case "4": ViewBuses(); break;
                     case "5": CreateScheduleWorkflow(); break;
                     case "6": ViewSchedules(); break;
@@ -70,10 +85,8 @@ namespace BusTicketBookingSystem.UI
                     case "8": BookTicketWorkflow(); break;
                     case "9": ShowInvoices(); break;
                     case "10": PayInvoiceWorkflow(); break;
-                    case "11": Console.WriteLine("Feature coming up next."); break;
-                    case "12": 
-                        Console.WriteLine("Exiting application. Goodbye!");
-                        return;
+                    case "11": Console.WriteLine("Feature active."); break;
+                    case "12": return;
                     default:
                         Console.WriteLine("❌ Invalid choice.");
                         break;
@@ -99,6 +112,60 @@ namespace BusTicketBookingSystem.UI
         {
             foreach (var u in _userRepository.GetAllUsers()) Console.WriteLine(u);
             PauseForUser();
+        }
+        private void CreateBusWorkflow()
+        {
+            Console.WriteLine("=== Create New Bus ===");
+            Console.Write("Enter Coach Number (e.g., 915, Dhaka-Metro-12): ");
+            string coachNumber = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrWhiteSpace(coachNumber))
+            {
+                Console.WriteLine("❌ Coach number cannot be empty.");
+                return;
+            }
+
+            // Check if a coach with this exact number already exists
+            if (_busRepository.GetBusByCoachNumber(coachNumber) != null)
+            {
+                Console.WriteLine($"❌ Error: Coach number '{coachNumber}' is already registered.");
+                return;
+            }
+
+            Console.WriteLine("Select Seating Configuration Class:");
+            Console.WriteLine("1. Economy Coach (40 Seats, 4 Columns Layout)");
+            Console.WriteLine("2. Business Coach (28 Seats, 3 Columns Layout)");
+            Console.Write("Selection (1-2): ");
+            string classChoice = Console.ReadLine();
+
+            ISeatingStrategy selectedStrategy;
+            if (classChoice == "1")
+            {
+                selectedStrategy = new EconomySeatingStrategy();
+            }
+            else if (classChoice == "2")
+            {
+                selectedStrategy = new BusinessSeatingStrategy();
+            }
+            else
+            {
+                Console.WriteLine("❌ Invalid seating strategy selection.");
+                return;
+            }
+
+            try
+            {
+                // Construct the new domain object using our Strategy Pattern choice
+                Bus newBus = new Bus(coachNumber, selectedStrategy);
+                _busRepository.AddBus(newBus);
+        
+                Console.WriteLine($"\n✅ Bus Successfully Added to Fleet!");
+                Console.WriteLine($"Coach: {newBus.CoachNumber} | Class: {newBus.BusClass} | Capacity: {newBus.TotalSeats} seats");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Failed to save bus: {ex.Message}");
+            }
         }
         
 
@@ -202,32 +269,97 @@ namespace BusTicketBookingSystem.UI
             Console.Write("Select Trip Index: ");
             if (!int.TryParse(Console.ReadLine(), out int tripIdx) || tripIdx < 1 || tripIdx > schedules.Count) return;
 
-            Schedule sch = schedules[tripIdx - 1];
-            
-            // Show them the layout before they type a seat choice!
-            sch.DisplaySeatingGrid();
+        Schedule sch = schedules[tripIdx - 1];
+        sch.DisplaySeatingGrid();
 
-            Console.Write("Enter Numeric Seat Choice (e.g. 1, 2, 3...): ");
-            if (!int.TryParse(Console.ReadLine(), out int seatNum)) return;
 
-            try {
-                Ticket ticket = new Ticket(sch, passenger, seatNum);
-                Invoice invoice = new Invoice.Builder()
-                    .ForTicket(ticket)
-                    .WithAmount(sch.BaseFare)
-                    .SetPaidStatus(false) // Defaulting to UNPAID state explicitly
-                    .Build();
+    Console.Write("Enter Seat Choice (e.g., 1A, 2B, 3C): ");
+    string seatInput = Console.ReadLine()?.Trim().ToUpper();
 
-                _invoiceRepository.AddInvoice(invoice);
-                Console.WriteLine($"\n✅ Seat Secured! Ticket Issued.\n{invoice}");
-            } catch (Exception ex) { Console.WriteLine($"❌ Refused: {ex.Message}"); }
+    if (string.IsNullOrEmpty(seatInput) || seatInput.Length < 2)
+    {
+        Console.WriteLine("❌ Invalid seat format choice.");
+        return;
+    }
+
+
+    char seatLetter = seatInput[seatInput.Length - 1];
+    string rowPart = seatInput.Substring(0, seatInput.Length - 1);
+
+    if (!int.TryParse(rowPart, out int rowNum) || seatLetter < 'A' || seatLetter > 'D')
+    {
+        Console.WriteLine("❌ Invalid seat characters detected.");
+        return;
+    }
+
+
+    int columnsPerRow = sch.AssignedBus.BusClass.Equals("Business", StringComparison.OrdinalIgnoreCase) ? 3 : 4;
+    int colNum = seatLetter - 'A' + 1; 
+
+
+    if (columnsPerRow == 3 && seatLetter == 'D')
+    {
+        Console.WriteLine("❌ Business class coaches do not contain D seats.");
+        return;
+    }
+
+
+    int seatNum = (rowNum - 1) * columnsPerRow + colNum;
+
+
+    if (seatNum < 1 || seatNum > sch.AssignedBus.TotalSeats)
+    {
+        Console.WriteLine($"❌ Seat {seatInput} does not exist on this coach.");
+        return;
+    }
+
+    try {
+        Ticket ticket = new Ticket(sch, passenger, seatNum);
+        Invoice invoice = new Invoice.Builder()
+            .ForTicket(ticket)
+            .WithAmount(sch.BaseFare)
+            .SetPaidStatus(false) 
+            .Build();
+
+        _invoiceRepository.AddInvoice(invoice);
+        Console.WriteLine($"\n✅ Seat {seatInput} Secured! Ticket Issued.\n{invoice}");
+    } 
+    catch (Exception ex) { 
+        Console.WriteLine($"❌ Refused: {ex.Message}"); 
+    }
             PauseForUser();
         }
 
         private void ShowInvoices()
         {
-            foreach (var inv in _invoiceRepository.GetAllInvoices()) Console.WriteLine(inv);
-            PauseForUser();
+            Console.WriteLine("=== Show Invoices of a User ===");
+            Console.Write("Enter Passenger Email: ");
+            string email = Console.ReadLine();
+
+            var passenger = _userRepository.GetUserByEmail(email);
+            if (passenger == null)
+            {
+                Console.WriteLine("❌ No passenger profile found with that email address.");
+                return;
+            }
+
+            var userInvoices = _invoiceRepository.GetAllInvoices()
+                .Where(inv => inv.Ticket.Passenger.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+        
+            Console.WriteLine($"\nInvoices for {passenger.FullName} ({email}):");
+            if (!userInvoices.Any())
+            {
+                Console.WriteLine("No invoice history found for this user.");
+            }
+            else
+            {
+                foreach (var inv in userInvoices)
+                {
+                    Console.WriteLine(inv);
+                }
+            }
         }
 
         private void PayInvoiceWorkflow()

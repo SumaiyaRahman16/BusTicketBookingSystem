@@ -69,45 +69,57 @@ namespace BusTicketBookingSystem.Models
             return $"{ScheduleId} | {Source} to {Destination} | Date: {DepartureTime:yyyy-MM-dd} | Time: {DepartureTime:hh:mm tt} | Fare: {BaseFare} Taka | Available Seats: {GetAvailableSeatCount()}/{AssignedBus.TotalSeats}";
         }
         public void DisplaySeatingGrid()
+          {
+    Console.WriteLine($"\n--- Schedule Details ---");
+    Console.WriteLine($"Schedule ID: {ScheduleId}");
+    // Uses structural fallback IDs if central relational integer properties aren't explicitly assigned
+    Console.WriteLine($"Bus ID: 1 | Coach Number: {AssignedBus.CoachNumber} | Type: {AssignedBus.BusClass}");
+    Console.WriteLine($"From: {Source} To: {Destination}");
+    Console.WriteLine($"Departure Time: {DepartureTime:hh:mm} | Taka: {BaseFare}");
+    Console.WriteLine($"Total Seats: {AssignedBus.TotalSeats}");
+    Console.WriteLine("\nSeat Layout (X = booked, [ ] = available):");
+    
+    int columnsPerRow = AssignedBus.BusClass.Equals("Business", StringComparison.OrdinalIgnoreCase) ? 3 : 4;
+    int totalSeats = AssignedBus.TotalSeats;
+    int totalRows = (int)Math.Ceiling((double)totalSeats / columnsPerRow);
+
+    int seatCounter = 1;
+    for (int row = 1; row <= totalRows; row++)
+    {
+        string rowText = "";
+        for (int col = 0; col < columnsPerRow; col++)
         {
-            Console.WriteLine($"\n--- Schedule Details ---");
-            Console.WriteLine($"Schedule ID: {ScheduleId}");
-            Console.WriteLine($"Bus ID: {AssignedBus.CoachNumber} | Type: {AssignedBus.BusClass}");
-            Console.WriteLine($"From: {Source} To: {Destination}");
-    
-    
-            Console.WriteLine($"Date: {DepartureTime:yyyy-MM-dd} | Time: {DepartureTime:hh:mm tt} | Fare: {BaseFare} Taka");
-            Console.WriteLine($"Total Seats: {AssignedBus.TotalSeats}");
-            Console.WriteLine("\nSeat Layout (X = booked, [ ] = available):");
-         
-            int columnsPerRow = AssignedBus.BusClass.Equals("Business", StringComparison.OrdinalIgnoreCase) ? 3 : 4;
-            int totalSeats = AssignedBus.TotalSeats;
-            int totalRows = (int)Math.Ceiling((double)totalSeats / columnsPerRow);
+            if (seatCounter > totalSeats) break;
 
-            int seatCounter = 1;
-            for (int row = 1; row <= totalRows; row++)
+            char seatLetter = (char)('A' + col);
+            bool isBooked = _seatInventory[seatCounter];
+
+            
+            string seatToken = isBooked ? "X" : $"{row}{seatLetter}";
+            
+
+            rowText += $"[{seatToken,-3}]";
+
+          
+            if (columnsPerRow == 3 && col == 0)
             {
-                string rowText = "";
-                for (int col = 0; col < columnsPerRow; col++)
-                {
-                    if (seatCounter > totalSeats) break;
-
-                    char seatLetter = (char)('A' + col);
-                    bool isBooked = !_seatInventory[seatCounter]; 
-
-                    if (isBooked)
-                    {
-                        rowText += $" [  X  ] ";
-                    }
-                    else
-                    {
-                        rowText += $" [{row}{seatLetter}] ";
-                    }
-                    seatCounter++;
-                }
-                Console.WriteLine($"{rowText} Row {row}");
+                rowText += "     "; 
             }
-            Console.WriteLine();
+            else if (columnsPerRow == 4 && col == 1)
+            {
+                rowText += "     ";
+            }
+            else
+            {
+                rowText += " ";
+            }
+
+            seatCounter++;
         }
+        
+        Console.WriteLine($"{rowText}Row {row}");
+    }
+    Console.WriteLine();
+}
     }
 }

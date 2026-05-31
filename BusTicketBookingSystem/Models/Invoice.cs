@@ -4,19 +4,18 @@ namespace BusTicketBookingSystem.Models
 {
     public class Invoice
     {
+
         public string InvoiceId { get; private set; }
-        public Ticket AssociatedTicket { get; private set; }
+        public Ticket Ticket { get; private set; }
         public decimal TotalAmount { get; private set; }
         public bool IsPaid { get; private set; }
 
         private Invoice(Builder builder)
         {
-            InvoiceId = "INV-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
-            AssociatedTicket = builder.Ticket;
+            Ticket = builder.Ticket;
             TotalAmount = builder.TotalAmount;
             IsPaid = builder.IsPaid;
         }
-
 
         public void MarkAsPaid()
         {
@@ -26,9 +25,8 @@ namespace BusTicketBookingSystem.Models
         public override string ToString()
         {
             string status = IsPaid ? "PAID" : "UNPAID";
-            return $"Invoice: {InvoiceId} | Ticket ID: {AssociatedTicket.TicketId} | Amount: BDT {TotalAmount} | Status: {status}";
+            return $"Invoice ID: {InvoiceId} | Ticket ID: {Ticket?.TicketId} | Amount: BDT {TotalAmount} | Status: {status}";
         }
-
 
         public class Builder
         {
