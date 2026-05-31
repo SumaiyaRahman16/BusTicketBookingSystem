@@ -12,7 +12,7 @@ namespace BusTicketBookingSystem.Services
 
         public void AddInvoice(Invoice invoice)
         {
-            string generatedId = $"INV-{_idCounter++}";
+            string generatedId =$"{_idCounter++}";
 
             typeof(Invoice).GetProperty("InvoiceId")?.SetValue(invoice, generatedId);
 

@@ -45,6 +45,25 @@ namespace BusTicketBookingSystem.UI
             _scheduleRepository.AddSchedule(busSylhetDhaka, "Sylhet", "Dhaka", DateTime.Today.AddDays(1).AddHours(14), 1200); // Schedule 3
             _scheduleRepository.AddSchedule(busDhakaCox,    "Dhaka", "Cox's Bazar", DateTime.Today.AddHours(23), 900);       // Schedule 4
             _scheduleRepository.AddSchedule(busCtgDhaka,    "Chittagong", "Dhaka", DateTime.Today.AddDays(1).AddHours(8), 700); // Schedule 5 // Tomorrow 8:00 AM Economy Return
+            // User defaultUser = _userRepository.AddUser("Sumaiya Rahman", "01712345678", "sumaiya@sust.edu");
+            //
+            //
+            // var firstSchedule = _scheduleRepository.GetScheduleById("SCH-1");
+            // if (firstSchedule != null)
+            // {
+            //    
+            //     Ticket defaultTicket = new Ticket(firstSchedule, defaultUser, 1);
+            //
+            //
+            //     Invoice defaultInvoice = new Invoice.Builder()
+            //         .ForTicket(defaultTicket)
+            //         .WithAmount(firstSchedule.BaseFare)
+            //         .SetPaidStatus(false)
+            //         .Build();
+            //
+            //
+            //     _invoiceRepository.AddInvoice(defaultInvoice);
+            // }
         }
 
         public void RunMainMenu()
@@ -85,7 +104,7 @@ namespace BusTicketBookingSystem.UI
                     case "8": BookTicketWorkflow(); break;
                     case "9": ShowInvoices(); break;
                     case "10": PayInvoiceWorkflow(); break;
-                    case "11": Console.WriteLine("Feature active."); break;
+                    case "11": ShowTicketsOfUserWorkflow(); break;
                     case "12": return;
                     default:
                         Console.WriteLine("❌ Invalid choice.");
@@ -382,6 +401,50 @@ namespace BusTicketBookingSystem.UI
                 Console.WriteLine($"\n✅ Payment Successful! Updated Status:\n{invoice}");
             }
             PauseForUser();
+        }
+        private void ShowTicketsOfUserWorkflow()
+        {
+            Console.WriteLine("=== Show Tickets of a User ===");
+            Console.Write("Enter Passenger Email: ");
+            string email = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                Console.WriteLine("❌ Email cannot be empty.");
+                return;
+            }
+
+            // 1. Verify if the passenger actually exists in system memory
+            var passenger = _userRepository.GetUserByEmail(email);
+            if (passenger == null)
+            {
+                Console.WriteLine("❌ No passenger profile found with that email address.");
+                return;
+            }
+
+            // 2. Query our existing invoice repository to extract all associated tickets for this user
+            var userTickets = _invoiceRepository.GetAllInvoices()
+                .Where(inv => inv != null && 
+                              inv.Ticket != null && 
+                              inv.Ticket.Passenger != null && 
+                              inv.Ticket.Passenger.EmailAddress.Equals(email, StringComparison.OrdinalIgnoreCase))
+                .Select(inv => inv.Ticket)
+                .ToList();
+
+            // 3. Render the output
+            Console.WriteLine($"\n🎟️ Confirmed Tickets for {passenger.FullName} ({email}):");
+            if (!userTickets.Any())
+            {
+                Console.WriteLine("No active ticket bookings found for this user.");
+            }
+            else
+            {
+                foreach (var ticket in userTickets)
+                {
+                    // This cleanly calls your Ticket.cs override ToString() method layout
+                    Console.WriteLine(ticket); 
+                }
+            }
         }
 
         private void PauseForUser()
