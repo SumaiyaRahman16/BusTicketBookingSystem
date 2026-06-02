@@ -8,16 +8,26 @@ namespace BusTicketBookingSystem.Services
     public class BusRepository : IBusRepository
     {
         private readonly List<Bus> _buses = new List<Bus>();
+        private int _idCounter = 1; 
+
 
         public void AddBus(Bus bus)
         {
             if (bus == null) 
                 throw new ArgumentNullException(nameof(bus));
                 
+            string generatedId = $"BusID-{_idCounter++}";
+            
+            typeof(Bus).GetProperty("BusId")?.SetValue(bus, generatedId);
+            
             if (GetBusByCoachNumber(bus.CoachNumber) != null)
                 throw new InvalidOperationException($"Coach number {bus.CoachNumber} is already registered in the system.");
 
             _buses.Add(bus);
+            
+           
+      
+ 
         }
 
         public Bus GetBusByCoachNumber(string coachNumber)

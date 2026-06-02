@@ -10,6 +10,8 @@ public class Bus
     public string CoachNumber { get; private set; }
     public string BusClass { get; private set; }
     public int TotalSeats { get; private set; }
+    
+    public int IdCounter = 1;
 
     public Bus(string coachNumber, ISeatingStrategy seatingStrategy)
     {
@@ -19,7 +21,8 @@ public class Bus
             throw new ArgumentNullException(nameof(seatingStrategy), "Seating strategy must be provided.");
 
     
-        BusId = "BUS-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        // BusId = "BUS-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+  
             
         CoachNumber = coachNumber;
 

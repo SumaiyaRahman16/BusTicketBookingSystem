@@ -5,8 +5,8 @@ namespace BusTicketBookingSystem.Services
 {
     public interface IInvoiceRepository
     {
-        void AddInvoice(Invoice invoice);
-        Invoice GetInvoiceById(string invoiceId);
+         void AddInvoice(Invoice invoice);
+         Invoice GetInvoiceById(string invoiceId);
         IEnumerable<Invoice> GetAllInvoices();
     }
 }

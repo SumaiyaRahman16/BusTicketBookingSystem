@@ -14,7 +14,7 @@ namespace BusTicketBookingSystem.Services
         public Schedule AddSchedule(Bus bus, string source, string destination, DateTime departureTime, decimal baseFare)
         {
 
-            string generatedId = $"SCH-{_idCounter++}";
+            string generatedId = $"SchID-{_idCounter++}";
 
             Schedule newSchedule = new Schedule(bus, source, destination, departureTime, baseFare);
             

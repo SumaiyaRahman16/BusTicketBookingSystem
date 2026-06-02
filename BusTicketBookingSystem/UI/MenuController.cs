@@ -50,6 +50,7 @@ namespace BusTicketBookingSystem.UI
             
             var firstSchedule = _scheduleRepository.GetScheduleById("SCH-1");
             if (firstSchedule != null)
+                
             {
                
                 Ticket defaultTicket = new Ticket(firstSchedule, defaultUser, 1);
@@ -68,8 +69,7 @@ namespace BusTicketBookingSystem.UI
 
         public void RunMainMenu()
         {
-
-            Console.WriteLine("--- Bus Ticket Booking System ---");
+            Console.WriteLine("Bus Ticket Booking System : ");
 
             while (true)
             {
@@ -107,7 +107,7 @@ namespace BusTicketBookingSystem.UI
                     case "11": ShowTicketsOfUserWorkflow(); break;
                     case "12": return;
                     default:
-                        Console.WriteLine("❌ Invalid choice.");
+                        Console.WriteLine("❌Invalid choice.");
                         break;
                 }
             }
@@ -144,7 +144,7 @@ namespace BusTicketBookingSystem.UI
                 return;
             }
 
-            // Check if a coach with this exact number already exists
+            // check if a coach with this exact number already exists
             if (_busRepository.GetBusByCoachNumber(coachNumber) != null)
             {
                 Console.WriteLine($"❌ Error: Coach number '{coachNumber}' is already registered.");
@@ -191,7 +191,7 @@ namespace BusTicketBookingSystem.UI
         private void ViewBuses()
         {
             foreach (var b in _busRepository.GetAllBuses()) 
-                Console.WriteLine($"Coach: {b.CoachNumber} | Class: {b.BusClass} | Capacity: {b.TotalSeats}");
+                Console.WriteLine( $" BusID : {b.BusId} | Coach: {b.CoachNumber} | Class: {b.BusClass} | Capacity: {b.TotalSeats}");
             PauseForUser();
         }
         private void CreateScheduleWorkflow()
@@ -269,7 +269,7 @@ namespace BusTicketBookingSystem.UI
             Console.Write("\nSelection number: ");
             if (int.TryParse(Console.ReadLine(), out int idx) && idx > 0 && idx <= schedules.Count)
             {
-                schedules[idx - 1].DisplaySeatingGrid();
+                schedules[idx - 1].DisplaySeatingGrid(_invoiceRepository);
             }
             else { Console.WriteLine("Invalid entry."); }
             PauseForUser();
@@ -289,7 +289,7 @@ namespace BusTicketBookingSystem.UI
             if (!int.TryParse(Console.ReadLine(), out int tripIdx) || tripIdx < 1 || tripIdx > schedules.Count) return;
 
         Schedule sch = schedules[tripIdx - 1];
-        sch.DisplaySeatingGrid();
+        sch.DisplaySeatingGrid(_invoiceRepository);
 
 
     Console.Write("Enter Seat Choice (e.g., 1A, 2B, 3C): ");
@@ -342,6 +342,8 @@ namespace BusTicketBookingSystem.UI
 
         _invoiceRepository.AddInvoice(invoice);
         Console.WriteLine($"\n✅ Seat {seatInput} Secured! Ticket Issued.\n{invoice}");
+        Console.Write("Pay for your ticket with Invoice ID to book your ticket permanently");
+
     } 
     catch (Exception ex) { 
         Console.WriteLine($"❌ Refused: {ex.Message}"); 
@@ -414,7 +416,6 @@ namespace BusTicketBookingSystem.UI
                 return;
             }
 
-            // 1. Verify if the passenger actually exists in system memory
             var passenger = _userRepository.GetUserByEmail(email);
             if (passenger == null)
             {
@@ -422,7 +423,6 @@ namespace BusTicketBookingSystem.UI
                 return;
             }
 
-            // 2. Query our existing invoice repository to extract all associated tickets for this user
             var userTickets = _invoiceRepository.GetAllInvoices()
                 .Where(inv => inv != null && 
                               inv.Ticket != null && 
@@ -441,7 +441,6 @@ namespace BusTicketBookingSystem.UI
             {
                 foreach (var ticket in userTickets)
                 {
-                    // This cleanly calls your Ticket.cs override ToString() method layout
                     Console.WriteLine(ticket); 
                 }
             }

@@ -18,8 +18,7 @@ namespace BusTicketBookingSystem.Services
             if (GetUserByEmail(emailAddress) != null)
                 throw new InvalidOperationException("A user with this email address already exists.");
 
-
-            string generatedId = $"USR-{_idCounter++}";
+            string generatedId = $"UsrID-{_idCounter++}";
 
 
             User newUser = new User(generatedId, fullName, mobileNumber, emailAddress);
