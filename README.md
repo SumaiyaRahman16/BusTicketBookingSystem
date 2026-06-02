@@ -14,6 +14,7 @@ An in-memory, console-based ticket reservation engine built with C# and .NET Cor
 
 ##  Architectural Design
 
+```
 BusTicketBookingSystem/
 ├── Program.cs                  # Main runner entry point of the application
 ├── Models/                     # Pure domain logic layers and data schemas
