@@ -14,23 +14,32 @@ An in-memory, console-based ticket reservation engine built with C# and .NET Cor
 
 ##  Architectural Design
 
-```text
 BusTicketBookingSystem/
-├── Program.cs                      # Main runner & console UI
-├── Models/                         # Pure domain logic and schemas
-│   ├── User.cs                     # Passenger profiles with Regex validation
-│   ├── Schedule.cs                 # Trip manager with Dictionary-based seat tracking
-│   ├── Ticket.cs                   # Passenger-to-seat mappings
-│   ├── Invoice.cs                  # Secured financial billing data
-│   └── Bus/                        
-│       ├── Bus.cs                  # Physical coach definitions
-│       └── Strategies/             # Strategy Pattern for seating layouts
-└── Services/                       # In-memory storage engines (Repository Layer)
-    ├── IUserRepository.cs          # Data abstraction contract
-    └── UserRepository.cs           # RAM data store with sequential IDs (USR-1, USR-2)
+├── Program.cs                  # Main runner entry point of the application
+├── Models/                     # Pure domain logic layers and data schemas
+│   ├── Invoice.cs              # Financial record handling with internal Builder logic
+│   ├── Schedule.cs             # Route management and dynamic repo-driven layout rendering
+│   ├── Ticket.cs               # Core core seat-to-passenger data structures
+│   ├── User.cs                 # Profiling rules for system passengers
+│   └── Bus/
+│       ├── Bus.cs              # Fleet profile properties and structure tracking
+│       └── Strategies/         # Dynamic seat calculation layout strategies
+│           ├── BusinessSeatingStrategy.cs
+│           ├── EconomySeatingStrategy.cs
+│           └── ISeatingStrategy.cs
+├── Services/                   # Persistence wrappers (In-Memory Repository Layer)
+│   ├── BusRepository.cs
+│   ├── IBusRepository.cs
+│   ├── IInvoiceRepository.cs   # Note: Double 'I' naming constraint contract
+│   ├── InvoiceRepository.cs
+│   ├── IScheduleRepository.cs
+│   ├── IUserRepository.cs
+│   ├── ScheduleRepository.cs
+│   └── UserRepository.cs
+└── UI/                         # Presentation rendering controllers
+    └── MenuController.cs       # Workflow state loop handlers, grids, and inputs
 
 ```
-
 ---
 
 ## Design Patterns Implemented
