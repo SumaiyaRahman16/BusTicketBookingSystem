@@ -45,25 +45,25 @@ namespace BusTicketBookingSystem.UI
             _scheduleRepository.AddSchedule(busSylhetDhaka, "Sylhet", "Dhaka", DateTime.Today.AddDays(1).AddHours(14), 1200); // Schedule 3
             _scheduleRepository.AddSchedule(busDhakaCox,    "Dhaka", "Cox's Bazar", DateTime.Today.AddHours(23), 900);       // Schedule 4
             _scheduleRepository.AddSchedule(busCtgDhaka,    "Chittagong", "Dhaka", DateTime.Today.AddDays(1).AddHours(8), 700); // Schedule 5 // Tomorrow 8:00 AM Economy Return
-            // User defaultUser = _userRepository.AddUser("Sumaiya Rahman", "01712345678", "sumaiya@sust.edu");
-            //
-            //
-            // var firstSchedule = _scheduleRepository.GetScheduleById("SCH-1");
-            // if (firstSchedule != null)
-            // {
-            //    
-            //     Ticket defaultTicket = new Ticket(firstSchedule, defaultUser, 1);
-            //
-            //
-            //     Invoice defaultInvoice = new Invoice.Builder()
-            //         .ForTicket(defaultTicket)
-            //         .WithAmount(firstSchedule.BaseFare)
-            //         .SetPaidStatus(false)
-            //         .Build();
-            //
-            //
-            //     _invoiceRepository.AddInvoice(defaultInvoice);
-            // }
+            User defaultUser = _userRepository.AddUser("Sumaiya Rahman", "01712345678", "sumaiya@sust.edu");
+            
+            
+            var firstSchedule = _scheduleRepository.GetScheduleById("SCH-1");
+            if (firstSchedule != null)
+            {
+               
+                Ticket defaultTicket = new Ticket(firstSchedule, defaultUser, 1);
+            
+            
+                Invoice defaultInvoice = new Invoice.Builder()
+                    .ForTicket(defaultTicket)
+                    .WithAmount(firstSchedule.BaseFare)
+                    .SetPaidStatus(false)
+                    .Build();
+            
+            
+                _invoiceRepository.AddInvoice(defaultInvoice);
+            }
         }
 
         public void RunMainMenu()
