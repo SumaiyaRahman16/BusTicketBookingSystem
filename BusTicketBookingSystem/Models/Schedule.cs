@@ -73,7 +73,7 @@ public void DisplaySeatingGrid(Services.IInvoiceRepository invoiceRepository)
 {
     Console.WriteLine($"\n--- Schedule Details ---");
     Console.WriteLine($"Schedule ID: {ScheduleId}");
-    Console.WriteLine($"Bus ID: 1 | Coach Number: {AssignedBus.CoachNumber} | Type: {AssignedBus.BusClass}");
+    Console.WriteLine($"{AssignedBus.BusId} | Coach Number: {AssignedBus.CoachNumber} | Type: {AssignedBus.BusClass}");
     Console.WriteLine($"From: {Source} To: {Destination}");
     Console.WriteLine($"Departure Time: {DepartureTime:hh:mm} | Taka: {BaseFare}");
     Console.WriteLine($"Total Seats: {AssignedBus.TotalSeats}");
