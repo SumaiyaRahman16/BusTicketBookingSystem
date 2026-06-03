@@ -77,15 +77,14 @@ public void DisplaySeatingGrid(Services.IInvoiceRepository invoiceRepository)
     Console.WriteLine($"From: {Source} To: {Destination}");
     Console.WriteLine($"Departure Time: {DepartureTime:hh:mm} | Taka: {BaseFare}");
     Console.WriteLine($"Total Seats: {AssignedBus.TotalSeats}");
-    
-    // Updated descriptive text to reflect your new business rule!
+   
     Console.WriteLine("\nSeat Layout ('X' = Not Available, Label = Available):)");
     
     int columnsPerRow = AssignedBus.BusClass.Equals("Business", StringComparison.OrdinalIgnoreCase) ? 3 : 4;
     int totalSeats = AssignedBus.TotalSeats;
     int totalRows = (int)Math.Ceiling((double)totalSeats / columnsPerRow);
 
-    // Fetch all paid invoices for THIS specific schedule route
+    // fetching  all paid invoices for  specific schedule route
     var paidSeatsForThisSchedule = invoiceRepository.GetAllInvoices()
         .Where(inv => inv != null && 
                       inv.Ticket != null && 
@@ -104,7 +103,7 @@ public void DisplaySeatingGrid(Services.IInvoiceRepository invoiceRepository)
 
             char seatLetter = (char)('A' + col);
             
-            // 🔑 CRITICAL CHANGE: The seat shows "X" ONLY if it exists in our paid collection
+            //  CRITICAL CHANGE: The seat shows "X" ONLY if it exists in our paid collection
             bool isPaidAndConfirmed = paidSeatsForThisSchedule.Contains(seatCounter);
 
             string seatToken = isPaidAndConfirmed ? "X" : $"{row}{seatLetter}";
